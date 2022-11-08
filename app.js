@@ -13,12 +13,14 @@ const chats = require("./schemas/chats")
 app.use(express.static(path.join(__dirname, "src")));
 const PORT = process.env.PORT || 5000;
 
+
 io.on("connection", (socket) => {
+    chats.find().then(result => {
+        socket.emit('output-message', result)
+    });
+
     socket.on("chatting", (data) => {
-        chats.find().then(() => {
-            socket.emit()
-        })
-        const { name, msg } = data;
+        const {name, msg} = data;
         const time = moment(new Date()).format("h:mm A")
         const chatData = new chats({name, msg, time});
         chatData.save().then(() => {
