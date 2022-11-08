@@ -26,6 +26,15 @@ function send() {
 
 sendButton.addEventListener("click", send)
 
+socket.on('output-message', (data) => {
+    if (data.length) {
+        data.forEach(message => {
+            LiModel(message.name, message.msg, message.time)
+        });
+    }
+    displayContainer.scrollTo(0, displayContainer.scrollHeight)
+})
+
 socket.on("chatting", (data) => {
     const {name, msg, time} = data;
     LiModel(name, msg, time);
@@ -41,16 +50,18 @@ socket.on("result", (data) => {
     }
 })
 
-function LiModel(name, msg, time) {
 
+function LiModel(name, msg, time) {
     const li = document.createElement("li");
     li.classList.add(nickname.value === name ? "sent" : "received")  /*같으면?"sent" 다르면 "received"*/
+
     const dom = `<span class="profile">
     <span class="user">${name}</span>
     <img src="https://placeimg.com/50/50/any" alt="any">
   </span>
   <span class="message">${msg}</span>
   <span class="time">${time}</span>`;
+
     li.innerHTML = dom;
     chatList.appendChild(li);
 
